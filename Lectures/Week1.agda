@@ -64,39 +64,13 @@ append : {X : Set} -> List X -> List X -> List X
 append [] ys = ys
 append (x :: xs) ys = x :: append xs ys
 
-
-
-
-
-
-
-
-
-
-
-
-{-
-data _⊎_ (A B : Set) : Set where
-  inj₁ : A -> A ⊎ B
-  inj₂ : B -> A ⊎ B
-
-record _×_ (A B : Set) : Set where
-  constructor _,_
-  field
-    proj₁ : A
-    proj₂ : B
-open _×_
--}
-
--- swap : {A B : Set} -> A × B -> B × A -- (F)
-
--- distribute : {A B C : Set} → A × (B ⊎ C) -> (A × B) ⊎ (A × C) -- (F)
-
-
 open import Data.Nat
+open import Data.Bool
 
 -- _!!_ : ∀ {A} → List A -> ℕ -> A -- (C)
 
 -- open import Data.Maybe -- (C)
 
 -- precise version -- (F)
+
+-- find : {A : Set}{n : ℕ} -> (A -> Bool) -> Vec A n -> Maybe (Fin n)
