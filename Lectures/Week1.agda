@@ -67,10 +67,42 @@ append (x :: xs) ys = x :: append xs ys
 open import Data.Nat
 open import Data.Bool
 
--- _!!_ : ∀ {A} → List A -> ℕ -> A -- (C)
+{-
+_!!_ : ∀ {A} → List A -> ℕ -> A
+[] !! n = {!!}
+(x :: xs) !! zero = x
+(x :: xs) !! suc n = xs !! n
+-}
 
--- open import Data.Maybe -- (C)
+open import Data.Maybe
 
--- precise version -- (F)
+{-
+_!!_ : ∀ {A} → List A -> ℕ -> Maybe A
+[] !! n = nothing
+(x :: xs) !! zero = just x
+(x :: xs) !! suc n = xs !! n
+-}
 
--- find : {A : Set}{n : ℕ} -> (A -> Bool) -> Vec A n -> Maybe (Fin n)
+-- precise version -- (C)
+data Vec (X : Set) : ℕ -> Set where
+  [] : Vec X zero
+  _::_ : ∀ {n} -> X -> Vec X n -> Vec X (suc n)
+
+data Fin : ℕ -> Set where
+  zero : ∀ {n} -> Fin (suc n)
+  suc : ∀ {n} -> Fin n -> Fin (suc n)
+
+_!!_ : ∀ {A n} → Vec A n -> Fin n -> A
+[] !! ()
+(x :: xs) !! zero = x
+(x :: xs) !! suc n = xs !! n
+
+
+
+find : {A : Set}{n : ℕ} -> (A -> Bool) -> Vec A n -> Maybe (Fin n)
+find p [] = nothing
+find p (x :: xs) with p x
+find p (x :: xs) | false with find p xs
+find p (x :: xs) | false | just k = just (suc k)
+find p (x :: xs) | false | nothing = nothing
+find p (x :: xs) | true = just zero
