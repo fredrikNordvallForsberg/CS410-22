@@ -13,7 +13,8 @@ data Bool : Set where -- can be found in Data.Bool
 -- We can define for example `and` by pattern matching:
 
 _&_ : Bool -> Bool -> Bool
-x & y = {!!}
+false & y = false
+true & y = y
 
 -- but how do we represent eg `(∀ n : ℕ) P(n)`?
 
@@ -50,10 +51,10 @@ _∧_ : Set -> Set -> Set
 A ∧ B = A × B
 
 ex1 : {A B : Set} → A × B → A
-ex1 = {!!}
+ex1 = proj₁ 
 
-ex2 : {A : Set} → A -> A × A
-ex2 = {!!}
+ex2 : {A : Set} → A -> A ∧ A
+ex2 a = a , a
 
 {- Implication -}
 
@@ -80,10 +81,10 @@ ex2 = {!!}
 -- A: A method for converting proofs of A into proofs of B -- a function!
 
 ex3 : {A : Set} → A -> A
-ex3 = {!!}
+ex3 a = a
 
 ex4 : {A B C D : Set} -> ((A -> B -> C) -> D) -> (A -> C) -> D
-ex4 = {!!}
+ex4 f g = f (λ a _ → g a)
 
 {- True and False -}
 
@@ -94,14 +95,14 @@ open import Data.Unit -- ⊤ \top
 -- again find definition by clicking
 
 ex5 : {B : Set} -> B -> ⊤
-ex5 = {!!}
+ex5 = _
 
 -- the empty type represents a false proposition
 
 open import Data.Empty -- ⊥ \bot
 
 ex6 : {B : Set} -> ⊥ -> B
-ex6 = {!!}
+ex6 = {!λ ()!}
 
 {- Disjunction -}
 
