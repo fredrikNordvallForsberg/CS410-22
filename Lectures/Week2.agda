@@ -102,7 +102,7 @@ ex5 = _
 open import Data.Empty -- ⊥ \bot
 
 ex6 : {B : Set} -> ⊥ -> B
-ex6 = {!λ ()!}
+ex6 = λ ()    -- `⊥-elim` in the library 
 
 {- Disjunction -}
 
@@ -139,7 +139,8 @@ _∨_ : Set -> Set -> Set
 A ∨ B = A ⊎ B
 
 ex7 : {A B : Set} -> A ⊎ B -> B ⊎ A
-ex7 = {!!}
+ex7 (inj₁ a) = inj₂ a
+ex7 (inj₂ b) = inj₁ b
 
 {- Negation -}
 
@@ -170,33 +171,11 @@ ex7 = {!!}
 ¬ A = A -> ⊥
 
 ex8 : ¬ (⊤ -> ⊥)
-ex8 = {!!}
+ex8 f = f tt
 
 ex9 : {A B : Set} -> A -> ¬ A -> B
-ex9 = {!!}
-
-----------------------------------------------------------------------
--- Classical logic
-----------------------------------------------------------------------
-
--- the law of excluded middle
-
-LEM : Set1
-LEM = {P : Set} -> P ⊎ ¬ P
-
-lem : LEM
-lem {P} = {!!}
-
--- double negation elimination
-
-DNE : Set1
-DNE = {P : Set} -> ¬ ¬ P -> P
-
-dne : DNE
-dne {P} ¬¬p = {!!}
-
-LEM→DNE : LEM -> DNE
-LEM→DNE lem {P} = {!!}
+ex9 a ¬a with ¬a a
+... | ()
 
 ----------------------------------------------------------------------
 -- Predicates in type theory
@@ -214,11 +193,11 @@ isEven zero = ⊤
 isEven (suc zero) = ⊥
 isEven (suc (suc n)) = isEven n
 
-test : isEven 4
-test = {!!}
+test : isEven 4 --(suc (suc .... zero))
+test = tt
 
 test' : ¬ isEven 5
-test' = {!!}
+test' () 
 
 
 
@@ -236,7 +215,9 @@ test' = {!!}
 
 
 _>1 : ℕ -> Set
-x >1 = {!!}
+zero >1 = ⊥
+suc zero >1 = ⊥
+suc (suc x) >1 = ⊤
 
 
 
@@ -262,7 +243,7 @@ suc (suc zero) <3 = ⊤
 suc (suc (suc n)) <3 = ⊥
 
 fact : 1 <3 × 2 >1
-fact = {!!}
+fact = _
 
 
 
@@ -284,15 +265,55 @@ data _≡_ {A : Set} (x : A) : A → Set where
 -}
 open import Agda.Builtin.Equality
 
-
 ex10 : 5 + 3 ≡ 8
-ex10 = {!!}
+ex10 = refl
 
 ex11 : {x : ℕ} → (p : x ≡ 2) → x + 4 ≡ 6
-ex11 p = {!!}
+ex11 refl = refl
 
-ex11' : {x : ℕ} → (p : x ≡ 2) → x + 4 ≡ 6
-ex11' p = {!!} -- rewrite
+ex11' : {x y : ℕ} → (p : x + y ≡ 2) → (x + y) + 4 ≡ 6
+ex11' p rewrite p = refl -- rewrite
+
+
+open import Relation.Binary.PropositionalEquality using (cong)
+
+ex11'' : {A B : Set} → (f : A → B) → {x y : A} → (p : x ≡ y) → f x ≡ f y
+ex11'' f refl = refl  -- same as `cong`
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------
+-- Classical logic
+----------------------------------------------------------------------
+
+-- the law of excluded middle
+
+LEM : Set1
+LEM = {P : Set} -> P ⊎ ¬ P
+
+lem : LEM
+lem {P} = {!!}
+
+-- double negation elimination
+
+DNE : Set1
+DNE = {P : Set} -> ¬ ¬ P -> P
+
+dne : DNE
+dne {P} ¬¬p = {!!}
+
+LEM→DNE : LEM -> DNE
+LEM→DNE lem {P} = {!!}
+
+
 
 
 
