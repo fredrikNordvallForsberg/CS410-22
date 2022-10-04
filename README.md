@@ -6,3 +6,4 @@
 * Lecture 2: [Making use of precise types](https://youtu.be/37ENUdO8IVU) (22 Sep)
 * Lecture 3: [Logic in type theory](https://youtu.be/yDeI-HiC0wQ) (27 Sep)
 * Lecture 4: [Predicates, and basic equality](https://youtu.be/g2N_-sscq6c) (29 Sep)
+* Lecture 5: [Classical logic, and forall and exists](https://youtu.be/IYNFSE1-4yE) (4 Oct)
