@@ -28,19 +28,6 @@ true & y = y
 
 -- Q: What is a proof of `A ∧ B`?
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- A: A proof of A and a proof of B -- a tuple!
 
 open import Data.Product -- _×_ \times
@@ -59,24 +46,6 @@ ex2 a = a , a
 {- Implication -}
 
 -- Q: What is a proof of `A → B`?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- A: A method for converting proofs of A into proofs of B -- a function!
 
@@ -102,34 +71,11 @@ ex5 = _
 open import Data.Empty -- ⊥ \bot
 
 ex6 : {B : Set} -> ⊥ -> B
-ex6 = λ ()    -- `⊥-elim` in the library 
+ex6 = λ ()    -- `⊥-elim` in the library
 
 {- Disjunction -}
 
 -- Q: What is a proof of `A ∨ B`?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- A: A proof of A, or a proof of B -- a disjoint union
 
@@ -145,25 +91,6 @@ ex7 (inj₂ b) = inj₁ b
 {- Negation -}
 
 -- Q: What is a proof of `¬ A`?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- A: A method to show that all proofs of A are impossible -- a function A → ⊥
 
@@ -197,44 +124,12 @@ test : isEven 4 --(suc (suc .... zero))
 test = tt
 
 test' : ¬ isEven 5
-test' () 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+test' ()
 
 _>1 : ℕ -> Set
 zero >1 = ⊥
 suc zero >1 = ⊥
 suc (suc x) >1 = ⊤
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 _<3 : ℕ -> Set
 zero <3 = ⊤
@@ -244,18 +139,6 @@ suc (suc (suc n)) <3 = ⊥
 
 fact : 1 <3 × 2 >1
 fact = _
-
-
-
-
-
-
-
-
-
-
-
-
 
 {- Equality -}
 
@@ -274,160 +157,7 @@ ex11 refl = refl
 ex11' : {x y : ℕ} → (p : x + y ≡ 2) → (x + y) + 4 ≡ 6
 ex11' p rewrite p = refl -- rewrite
 
-
 open import Relation.Binary.PropositionalEquality using (cong)
 
 ex11'' : {A B : Set} → (f : A → B) → {x y : A} → (p : x ≡ y) → f x ≡ f y
 ex11'' f refl = refl  -- same as `cong`
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------------------------------------
--- Classical logic
-----------------------------------------------------------------------
-
--- the law of excluded middle
-
-LEM : Set1
-LEM = {P : Set} -> P ⊎ ¬ P
-
-lem : LEM
-lem {P} = {!!}
-
--- double negation elimination
-
-DNE : Set1
-DNE = {P : Set} -> ¬ ¬ P -> P
-
-dne : DNE
-dne {P} ¬¬p = {!!}
-
-LEM→DNE : LEM -> DNE
-LEM→DNE lem {P} = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{- Universal quantification ∀ -}
-
--- Q: What is a proof of (∀ x : A) P(x)?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- A: A method which produces a proof of P(a) for any given a : A -- a dependent function!
-
-ex12 : (n : ℕ) -> isEven n ⊎ isEven (suc n)
-ex12 = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- Note: `A → B` is "just" (_ : A) -> B
-
-{- Existential quantification ∃ -}
-
--- Q: What is a proof of (∃ x : A) P(x)?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- A: A method which produces a proof of P(a) for any given a : A -- a dependent function!
-
-ex13 : Σ ℕ isEven
-ex13 = {!!}
-
-ex13' : Σ ℕ isEven
-ex13' = {!!}
-
-ex14 : Σ ℕ isEven -> Σ ℕ (λ n → ¬ (isEven n))
-ex14 = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- Note: A × B is "just" Σ[ _ ∈ A ] B
-
