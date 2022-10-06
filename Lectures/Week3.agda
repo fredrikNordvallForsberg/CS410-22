@@ -90,26 +90,6 @@ ex14 (suc (suc n) , en) = ex14 (n , en)
 
 -- Note: A × B is "just" Σ[ _ ∈ A ] B
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ----------------------------------------------------------------------
 -- Equality, again
 ----------------------------------------------------------------------
@@ -117,31 +97,41 @@ ex14 (suc (suc n) , en) = ex14 (n , en)
 -- Useful/expected properties of ≡:
 
 sym : {A : Set} -> {x y : A} -> x ≡ y -> y ≡ x
-sym p = {!!}
+sym refl = refl
 
 trans : {A : Set} -> {x y z : A} -> x ≡ y -> y ≡ z -> x ≡ z
-trans p q = {!!}
+trans refl q = q
+-- trans p refl = p
+-- trans refl refl = refl
 
 subst : {A : Set} -> (P : A -> Set) -> {x y : A} -> x ≡ y -> P x -> P y
-subst = {!!}
+subst P refl px = px
 
+
+-- FUN EXERCISE: basically everything is a special case of subst
 
 -- "why is it stuck?"
 
 +-assoc : (n m k : ℕ) -> ((n + m) + k) ≡ (n + (m + k))
-+-assoc n m k = {!!}
++-assoc zero m k = refl
++-assoc (suc n) m k rewrite (+-assoc n m k) = refl
 
 open ≡-Reasoning
 
 *-distribʳ-+ : (m n k : ℕ) -> (n + k) * m ≡ n * m + k * m
-*-distribʳ-+ m n k = {!!}
+*-distribʳ-+ m zero k = refl
+*-distribʳ-+ m (suc n) k = begin
+  (suc n + k) * m
+    ≡⟨⟩
+  m + ((n + k) * m)
+    ≡⟨ cong (m +_) (*-distribʳ-+ m n k) ⟩      -- \==\< ? \>
+  m + (n * m + k * m)
+    ≡⟨ sym (+-assoc m (n * m) (k * m)) ⟩      -- \==\< ? \>
+  (m + n * m) + k * m
+    ∎ -- \qed
+-- C-u C-u C-c C-s "solve everything you can, with as much normalisation as possible"
 
 
-
-
-
-
-{-
 -- Reversing vectors with an accumulator
 
 -- we can reverse lists naively (complexity O(n²))
@@ -158,24 +148,28 @@ revListFast acc (x ∷ xs) = revListFast (x ∷ acc) xs
 
 -- let's do the same for vectors!
 
-revAcc : {A : Set}{n m : ℕ} -> Vec A {!!} -> Vec A {!!} -> Vec A {!!}
-revAcc {A} {n} acc xs = {!!}
+revAcc : {A : Set}{acc-length m : ℕ} -> Vec A acc-length -> Vec A m -> Vec A (acc-length + m)
+revAcc {A} {n} acc [] = subst (Vec A) (lemma n) acc where
+  lemma : (n : ℕ) → n ≡ n + 0
+  lemma zero = refl
+  lemma (suc n) = cong suc (lemma n)
+revAcc {A} {n} acc (x ∷ xs) = subst (Vec A) (lemma n _) (revAcc (x ∷ acc) xs)
+  where
+    lemma : (n m : ℕ) → suc (n + m) ≡ n + suc m
+    lemma zero m = refl
+    lemma (suc n) m = cong suc (lemma n m)
 
 reverse : {A : Set}{m : ℕ} -> Vec A m -> Vec A m
 reverse = revAcc []
 
 
+t = reverse (1 ∷ 2 ∷ 3 ∷ [])
+-- C-c C-n t "normalise"
 
 
-
-
-
-
-
-{-
 
 ----------------------------------------------------------------------
--- Structural equalities
+-- Structural equalities (not covered in lecture)
 ---------------------------------------------------------------------
 
 -----------------------------
@@ -184,20 +178,25 @@ reverse = revAcc []
 
 pair-≡ : {A B : Set} {a a' : A}{b b' : B} ->
          a ≡  a' -> b ≡ b' -> (a , b) ≡ (a' , b')
-pair-≡ p q = ?
+pair-≡ refl refl = refl -- if components are equal
 
 pair-≡-inverse : {A B : Set} {a a' : A}{b b' : B} ->
                  (a , b) ≡ (a' , b') -> (a ≡  a') × (b ≡ b')
-pair-≡-inverse p = ?
+pair-≡-inverse p = (cong proj₁ p , cong proj₂ p) -- *only* if components are equal
+
+-- So equality of pairs is a pair of equalities
 
 -----------------------------------
 -- When are dependent pairs equal?
 -----------------------------------
 
-dpair-≡ : {A : Set}{B : A -> Set} {a a' : A}{b : B a}{b' : B a'}  ->
+-- Similarly for dependent pairs: we need to use `subst` and the first
+-- equality p to fix up the type of the second equality
 
+dpair-≡ : {A : Set}{B : A -> Set} {a a' : A}{b : B a}{b' : B a'}  ->
+          (p : a ≡ a') -> (q : subst B p b ≡ b') ->
           (a , b) ≡ (a' , b')
-dpair-≡ = ?
+dpair-≡ refl refl = refl -- when we pattern match on `p`, the type of `q` gets simplified
 
 -----------------------------
 -- When are functions equal?
@@ -208,15 +207,15 @@ postulate
   funext : {A : Set}{B : A -> Set}{f f' : (x : A) -> B x} ->
             ((x : A) -> f x ≡ f' x) -> f ≡ f'
 
+  -- We often make use of this assumed fact, since we want to consider
+  -- functions that have the same "input-output behaviour" as the same
+
 -----------------------------------
 -- When are equality proofs equal?
 -----------------------------------
 
 UIP : {A : Set}{x y : A}(p q : x ≡ y) -> p ≡ q
-UIP p q = ?
+UIP refl refl = refl
 
 -- "uniqueness of identity proofs"; interesting things possible if we
 -- don't insist on this!
-
--}
--}
