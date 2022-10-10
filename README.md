@@ -8,3 +8,8 @@
 * Lecture 4: [Predicates, and basic equality](https://youtu.be/g2N_-sscq6c) (29 Sep)
 * Lecture 5: [Classical logic, and forall and exists](https://youtu.be/IYNFSE1-4yE) (4 Oct)
 * Lecture 6: [More about equality](https://youtu.be/NU6Ycmp19DE) (6 Oct)
+
+## Coursework
+
+* [Coursework.One](Coursework/One.agda) due Monday 10 October (beginning of Week 4)
+* [Coursework.Two](Coursework/Two.agda) due Monday 31 October (beginning of Week 7)
