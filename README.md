@@ -10,7 +10,7 @@
 * Lecture 6: [More about equality](https://youtu.be/NU6Ycmp19DE) (6 Oct)
 * Lecture 7: [Inductively defined relations](https://youtu.be/Wku5hdU402o) (11 oct)
 * Lecture 8: Discussion of Coursework 1 [no recording] (13 Oct)
-
+* Lecture 9: [Hutton's Razor](https://youtu.be/TbD9bTOTuUE) (18 Oct)
 ## Coursework
 
 * [Coursework.One](Coursework/One.agda) due Monday 10 October (beginning of Week 4)
