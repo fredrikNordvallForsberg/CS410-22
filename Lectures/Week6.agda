@@ -18,24 +18,13 @@ open Category
 ---------------------------------------------------------------------------
 
 SET : Category
-SET = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj SET = Set
+Hom SET A B = A -> B
+Category.id SET = λ x → x
+comp SET f g = λ x → g (f x)
+assoc SET = refl
+identityˡ SET = refl
+identityʳ SET = refl
 
 
 ---------------------------------------------------------------------------
@@ -83,23 +72,17 @@ eqMonoidMorphism {A} {B} {f} {g} refl =
     eqMonoidMorphism' refl refl = refl
 
 MONOID : Category
-MONOID = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj MONOID = Monoid
+Hom MONOID A B = MonoidMorphism A B
+fun (Category.id MONOID) x = x
+preserves-ε (Category.id MONOID) = refl
+preserves-∙ (Category.id MONOID) x y = refl
+fun (comp MONOID f g) a = fun g (fun f a)
+preserves-ε (comp MONOID f g) rewrite preserves-ε f = preserves-ε g
+preserves-∙ (comp MONOID f g) x y rewrite preserves-∙ f x y = preserves-∙ g (fun f x) (fun f y)
+assoc MONOID = eqMonoidMorphism refl
+identityˡ MONOID = eqMonoidMorphism refl
+identityʳ MONOID = eqMonoidMorphism refl
 
 
 ---------------------------------------------------------------------------
@@ -132,73 +115,63 @@ eqMonotoneMap {P} {Q} {f} {g} refl
          (ext λ x → ext (λ y → ext λ p → propositional Q _ _))
 
 PREORDER : Category
-PREORDER = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj PREORDER = Preorder
+Hom PREORDER = MonotoneMap
+fun (Category.id PREORDER) = λ x → x
+monotone (Category.id PREORDER) x y x≤y = x≤y
+fun (comp PREORDER f g) a = fun g (fun f a)
+monotone (comp PREORDER f g) x y x≤y = monotone g _ _ (monotone f x y x≤y)
+assoc PREORDER = eqMonotoneMap refl
+identityˡ PREORDER = eqMonotoneMap refl
+identityʳ PREORDER = eqMonotoneMap refl
 
 
 ---------------------------------------------------------------------------
--- Discrete categories
+-- Discrete categories (not covered in the lecture)
 ---------------------------------------------------------------------------
+
+-- Every set can be seen as a category where there are only identity morphisms
 
 discrete : Set -> Category
-discrete X = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj (discrete X) = X
+Hom (discrete X) x y = x ≡ y
+Category.id (discrete X) = refl
+comp (discrete X) refl refl = refl
+assoc (discrete X) {f = refl} {refl} {refl} = refl
+identityˡ (discrete X) {f = refl} = refl
+identityʳ (discrete X) {f = refl} = refl
 
 
 ---------------------------------------------------------------------------
--- Monoids as categories
+-- Monoids as categories (only alluded to in the lecture)
 ---------------------------------------------------------------------------
+
+-- Every monoid can be seen as a boring category with exactly one
+-- object
 
 monoid : Monoid -> Category
-monoid M = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj (monoid M) = ⊤
+Hom (monoid M) tt tt = Carrier M
+Category.id (monoid M) = ε M
+comp (monoid M) = _∙_ M
+assoc (monoid M) = assoc M
+identityˡ (monoid M) = identityˡ M
+identityʳ (monoid M) = identityʳ M
 
 
 ---------------------------------------------------------------------------
--- Preorders as categories
+-- Preorders as categories (only alluded to in the lecture)
 ---------------------------------------------------------------------------
+
+-- Every preorder can be seen as a boring category where there is at
+-- most one morphism between any two objects
 
 porder : Preorder -> Category
-porder P = {!!}
+Obj (porder P) = Carrier P
+Hom (porder P) = _≤_ P
+Category.id (porder P) = reflexive P
+comp (porder P) = transitive P
+assoc (porder P) = propositional P _ _
+identityˡ (porder P) = propositional P _ _
+identityʳ (porder P) = propositional P _ _
 

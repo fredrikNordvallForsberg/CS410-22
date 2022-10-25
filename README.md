@@ -12,7 +12,7 @@
 * Lecture 8: Discussion of Coursework 1 [no recording] (13 Oct)
 * Lecture 9: [Hutton's Razor](https://youtu.be/TbD9bTOTuUE) (18 Oct)
 * Lecture 10: [Relating typed and untyped expressions, and proving optimisations correct](https://youtu.be/ZVfpTZ359FM) (20 Oct)
-
+* Lecture 11: [Definition and examples of categories](https://youtu.be/vTZVdo2zRYM) (25 Oct)
 
 ## Coursework
 

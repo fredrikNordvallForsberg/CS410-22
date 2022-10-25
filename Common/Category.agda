@@ -31,8 +31,8 @@ record Category : Set where
   field -- laws
     assoc     : ∀ {A B C D} {f : Hom A B} {g : Hom B C}{h : Hom C D} →
                 comp f (comp g h) ≡ (comp (comp f g) h)
-    identityˡ : ∀ {A B} {f : Hom A B} → comp f id ≡ f
-    identityʳ : ∀ {A B} {f : Hom A B} → comp id f ≡ f
+    identityˡ : ∀ {A B} {f : Hom A B} → comp id f ≡ f
+    identityʳ : ∀ {A B} {f : Hom A B} → comp f id ≡ f
 
 
 
