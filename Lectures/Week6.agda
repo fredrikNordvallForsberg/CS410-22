@@ -3,6 +3,7 @@ module Lectures.Week6 where
 
 open import Data.Unit hiding (_≤_)
 open import Data.Product
+open import Data.Maybe
 
 open import Function as Fun
 
@@ -175,3 +176,129 @@ assoc (porder P) = propositional P _ _
 identityˡ (porder P) = propositional P _ _
 identityʳ (porder P) = propositional P _ _
 
+
+
+
+
+
+---------------------------------------------------------------------------
+-- Tree is a functor
+---------------------------------------------------------------------------
+
+-- an excursion to Haskell
+
+open Functor
+
+data Tree (X : Set) : Set where
+  leaf : Tree X
+  _<[_]>_ : Tree X -> X -> Tree X -> Tree X
+
+TREE : Functor SET SET
+TREE = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------
+-- Forgetful mappings are functors
+---------------------------------------------------------------------------
+
+forgetMonoid : Functor MONOID SET
+forgetMonoid = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------
+-- "Canonical" constructions are often functors
+---------------------------------------------------------------------------
+
+smallestOrder : Functor SET PREORDER
+Carrier (act smallestOrder X) = X
+_≤_ (act smallestOrder X) x y = x ≡ y
+reflexive (act smallestOrder X) = refl
+transitive (act smallestOrder X) p q = trans p q
+propositional (act smallestOrder X) = uip
+fun (fmap smallestOrder f) = f
+monotone (fmap smallestOrder f) x y x=y = cong f x=y
+identity smallestOrder = eqMonotoneMap refl
+homomorphism smallestOrder = eqMonotoneMap refl
+
+-- Exercise: is there a greatest order? ("chaotic")
+
+--------------------------------------------------------------------------
+-- The category of categories
+---------------------------------------------------------------------------
+
+compFunctor : {C D E : Category} -> Functor C D → Functor D E → Functor C E
+compFunctor F G = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+idFunctor : {C : Category} -> Functor C C
+idFunctor = {!!}
+
+CAT : Category
+CAT = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------
+-- root is a natural transformation
+---------------------------------------------------------------------------
+open NaturalTransformation
+
+{-
+MAYBE : Functor SET SET
+act MAYBE = Maybe
+fmap MAYBE = {!!}
+identity MAYBE = {!!}
+homomorphism MAYBE = {!!}
+
+root : NaturalTransformation TREE MAYBE
+root = ?
+-}
