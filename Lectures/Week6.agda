@@ -193,27 +193,36 @@ data Tree (X : Set) : Set where
   leaf : Tree X
   _<[_]>_ : Tree X -> X -> Tree X -> Tree X
 
+tree-map : {X Y : Set} → (X → Y) → Tree X → Tree Y
+tree-map f leaf = leaf
+tree-map f (l <[ x ]> r) = tree-map f l <[ f x ]> tree-map f r
+
 TREE : Functor SET SET
-TREE = {!!}
+act TREE = Tree
+fmap TREE = tree-map
+identity TREE = ext identity-treemap
+ where
+ identity-treemap : ∀ {X} (x : Tree X) →
+                   tree-map (Category.id SET) x ≡ Category.id SET x
+ identity-treemap leaf = refl
+ identity-treemap (l <[ x ]> r) rewrite identity-treemap l | identity-treemap r = refl
 
-
-
-
-
-
-
-
-
-
-
-
+homomorphism TREE {X} {Y} {Z} {f} {g} = ext helper
+ where
+  helper : (x : act TREE X) →
+         fmap TREE (comp SET f g) x ≡ comp SET (fmap TREE f) (fmap TREE g) x
+  helper leaf = refl
+  helper (l <[ x ]> r) rewrite helper l | helper r = refl
 
 --------------------------------------------------------------------------
 -- Forgetful mappings are functors
 ---------------------------------------------------------------------------
 
 forgetMonoid : Functor MONOID SET
-forgetMonoid = {!!}
+act forgetMonoid = Carrier
+fmap forgetMonoid h = fun h
+identity forgetMonoid = refl
+homomorphism forgetMonoid = refl
 
 
 
