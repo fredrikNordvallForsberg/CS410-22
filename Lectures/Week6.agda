@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 {-# OPTIONS --type-in-type #-}
 module Lectures.Week6 where
 
@@ -10,7 +11,7 @@ open import Function as Fun
 open import Relation.Binary.PropositionalEquality
 open import Axiom.UniquenessOfIdentityProofs.WithK
 
-open import Common.Category
+open import Common.Category hiding (SET)
 
 open Category
 
@@ -223,18 +224,6 @@ act forgetMonoid = Carrier
 fmap forgetMonoid h = fun h
 identity forgetMonoid = refl
 homomorphism forgetMonoid = refl
-
-
-
-
-
-
-
-
-
-
-
-
 
 --------------------------------------------------------------------------
 -- "Canonical" constructions are often functors
