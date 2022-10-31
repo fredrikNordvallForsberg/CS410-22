@@ -119,3 +119,16 @@ eqNatTrans {C} η ρ p with ext p
                 subst (λ z → (X Y : Category.Obj C)(f : Category.Hom C X Y) → Category.comp D (fmap F f) (z Y) ≡ Category.comp D (z X) (fmap G f)) p (natural η) ≡ (natural ρ) ->
                η ≡ ρ
   eqNatTrans' η ρ refl refl = refl
+
+----------------------------
+-- The category of Sets
+----------------------------
+
+SET : Category
+Category.Obj SET = Set
+Category.Hom SET A B = A -> B
+Category.id SET = Fun.id
+Category.comp SET f g = g Fun.∘′ f
+Category.assoc SET = refl
+Category.identityˡ SET = refl
+Category.identityʳ SET = refl
