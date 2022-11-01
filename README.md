@@ -14,8 +14,10 @@
 * Lecture 10: [Relating typed and untyped expressions, and proving optimisations correct](https://youtu.be/ZVfpTZ359FM) (20 Oct)
 * Lecture 11: [Definition and examples of categories](https://youtu.be/vTZVdo2zRYM) (25 Oct)
 * Lecture 12: [Functors](https://youtu.be/a6Ex2N4NJO0) (27 Oct)
+* Lecture 13: [The category of categories, and natural transformations](https://youtu.be/HE96WiX_7Ww) (1 Nov)
 
 ## Coursework
 
 * [Coursework.One](Coursework/One.agda) due Monday 10 October (beginning of Week 4)
 * [Coursework.Two](Coursework/Two.agda) due Monday 31 October (beginning of Week 7)
+* [Coursework.Three](Coursework/Three.agda) due Monday 5 October (beginning of Week 12)

@@ -247,56 +247,45 @@ homomorphism smallestOrder = eqMonotoneMap refl
 ---------------------------------------------------------------------------
 
 compFunctor : {C D E : Category} -> Functor C D → Functor D E → Functor C E
-compFunctor F G = {!!}
-
-
-
-
-
-
-
-
-
-
-
+act (compFunctor F G) = act G ∘ act F
+fmap (compFunctor F G) = fmap G ∘ fmap F
+identity (compFunctor F G) {X} rewrite identity F {X} = identity G
+homomorphism (compFunctor F G) {f = f} {g} rewrite homomorphism F {f = f} {g} = homomorphism G
 
 idFunctor : {C : Category} -> Functor C C
-idFunctor = {!!}
+act idFunctor = Fun.id
+fmap idFunctor = Fun.id
+identity idFunctor = refl
+homomorphism idFunctor = refl
 
 CAT : Category
-CAT = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Obj CAT = Category
+Hom CAT = Functor
+Category.id CAT = idFunctor
+comp CAT = compFunctor
+assoc CAT = eqFunctor refl refl
+identityˡ CAT = eqFunctor refl refl
+identityʳ CAT = eqFunctor refl refl
 
 --------------------------------------------------------------------------
 -- root is a natural transformation
 ---------------------------------------------------------------------------
 open NaturalTransformation
 
-{-
+map-Maybe : {X Y : Set} → (X → Y) → Maybe X → Maybe Y
+map-Maybe f (just x) = just (f x)
+map-Maybe f nothing = nothing
+
 MAYBE : Functor SET SET
 act MAYBE = Maybe
-fmap MAYBE = {!!}
-identity MAYBE = {!!}
-homomorphism MAYBE = {!!}
+fmap MAYBE = map-Maybe
+identity MAYBE = ext λ { (just x) → refl ; nothing → refl }
+homomorphism MAYBE = ext λ { (just x) → refl ; nothing → refl }
 
 root : NaturalTransformation TREE MAYBE
-root = ?
--}
+transform root X leaf = nothing
+transform root X (l <[ x ]> r) = just x
+natural root X Y f = ext λ { leaf → refl ; (x <[ x₁ ]> x₂) → refl }
+
+-- Exercise: for each C and D, define a category where the objects are
+-- functors from C to D, and the morphisms natural transformations
