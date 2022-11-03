@@ -1,4 +1,3 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 {-# OPTIONS --type-in-type #-}
 module Lectures.Week6 where
 

@@ -3,18 +3,13 @@ module Lectures.Week7 where
 
 open import Data.Nat hiding (_≤_)
 open import Function using (_∘_)
+open import Data.Product
 
 open import Relation.Binary.PropositionalEquality
 
 open import Common.Category
 
-open Category
-
 open import Lectures.Week6 hiding (SET)
-
-open Functor
-
-{-
 
 ---------------------------------------------------------------------------
 -- Monads, categorically
@@ -38,9 +33,9 @@ record Monad (C : Category) : Set where
   join   = NaturalTransformation.transform joinNT
 
   field
-    returnJoin : {X : Obj C}    -> comp C (return (act M X)) (join X) ≡ id C
-    mapReturnJoin : {X : Obj C} -> comp C (fmap M (return X)) (join X) ≡ id C
-    joinJoin : {X : Obj C} -> comp C (join (act M X)) (join X) ≡ comp C (fmap M (join X)) (join X)
+    returnJoin : {X : Obj}    -> comp (return (act M X)) (join X) ≡ id
+    mapReturnJoin : {X : Obj} -> comp (fmap M (return X)) (join X) ≡ id
+    joinJoin : {X : Obj} -> comp (join (act M X)) (join X) ≡ comp (fmap M (join X)) (join X)
 
   open Functor M public
 
@@ -60,7 +55,7 @@ module _ where
 
   mapExpr : {X Y : Set} -> (X -> Y) -> Expr X -> Expr Y
   mapExpr f (var x) = var (f x)
-  mapExpr f (num x) = num x
+  mapExpr f (num n) = num n
   mapExpr f (e +E e') = mapExpr f e +E mapExpr f e'
 
   EXPR : Functor SET SET
@@ -69,22 +64,51 @@ module _ where
   Functor.identity EXPR = ext lemma where
     lemma : {A : Set} -> (x : Expr A) → mapExpr (λ x₁ → x₁) x ≡ x
     lemma (var x) = refl
-    lemma (num x) = refl
+    lemma (num n) = refl
     lemma (e +E e') = cong₂ _+E_ (lemma e) (lemma e')
   Functor.homomorphism EXPR {X} {f = f} {g} = ext lemma where
     lemma : (x : Expr X) → mapExpr (λ x₁ → g (f x₁)) x ≡ mapExpr g (mapExpr f x)
     lemma (var x) = refl
-    lemma (num x) = refl
+    lemma (num n) = refl
     lemma (e +E e') = cong₂ _+E_ (lemma e) (lemma e')
 
   joinExpr : {X : Set} -> Expr (Expr X) -> Expr X
-  joinExpr e = {!!}
+  joinExpr (var e) = e
+  joinExpr (num n) = num n
+  joinExpr (e +E e') = joinExpr e +E joinExpr e'
 
   EXPR-MONAD : Monad SET
-  EXPR-MONAD = {!!}
+  functor EXPR-MONAD = EXPR
+  transform (returnNT EXPR-MONAD) X = var
+  natural (returnNT EXPR-MONAD) X Y f = refl
+  transform (joinNT EXPR-MONAD) X = joinExpr
+  natural (joinNT EXPR-MONAD) X Y f = ext lemma
+    where
+      lemma : (x : Expr (Expr X)) → joinExpr (mapExpr (mapExpr f) x) ≡ mapExpr f (joinExpr x)
+      lemma (var e) = refl
+      lemma (num n) = refl
+      lemma (ee +E ee') rewrite lemma ee | lemma ee' = refl
+  returnJoin EXPR-MONAD = refl
+  mapReturnJoin EXPR-MONAD = ext lemma
+    where
+      lemma : {X : Set} → (x : Expr X) → joinExpr (mapExpr var x) ≡ x
+      lemma (var x) = refl
+      lemma (num n) = refl
+      lemma (e +E e') = cong₂ _+E_ (lemma e) (lemma e')
+  joinJoin EXPR-MONAD = ext lemma
+    where
+      lemma : {X : Set} -> (x : Expr (Expr (Expr X))) → joinExpr (joinExpr x) ≡ joinExpr (mapExpr joinExpr x)
+      lemma (var x) = refl
+      lemma (num n) = refl
+      lemma (e +E e') = cong₂ _+E_ (lemma e) (lemma e')
 
   bindExpr : {X Y : Set} -> (X -> Expr Y) -> Expr X -> Expr Y
   bindExpr f = joinExpr ∘ mapExpr f
+
+
+
+
+
 
 ---------------------------------------------------------------------------
 -- Adding a bottom is a monad
@@ -94,6 +118,7 @@ module _ where
 
   open Preorder
   open MonotoneMap
+  open Functor
   open Monad
   open NaturalTransformation
 
@@ -106,18 +131,103 @@ module _ where
     bottom : ∀ {x} → Lift≤ P ⊥' x
 
   Lift-reflexive : (P : Preorder) -> (x : Lift (Carrier P)) → Lift≤ P x x
-  Lift-reflexive P = {!!}
+  Lift-reflexive P (η x) = η< (reflexive P {x})
+  Lift-reflexive P ⊥' = bottom
 
-  Lift-transitive : (P : Preorder) -> {x y z : Lift (Carrier P)} →  Lift≤ P x y -> Lift≤ P y z -> Lift≤ P x z
-  Lift-transitive P = {!!}
+  Lift-transitive : (P : Preorder) -> {x y z : Lift (Carrier P)} →
+                    Lift≤ P x y -> Lift≤ P y z -> Lift≤ P x z
+  Lift-transitive P (η< p) (η< q) = η< (transitive P p q)
+  Lift-transitive P bottom q = bottom
+--  Lift-transitive P bottom bottom = {!!}
 
   mapLift : {X Y : Set} -> (f : X -> Y) -> Lift X -> Lift Y
   mapLift f (η x) = η (f x)
   mapLift f ⊥' = ⊥'
 
   LIFT : Functor PREORDER PREORDER
-  LIFT = {!!}
+  Carrier (act LIFT P) = Lift (Carrier P)
+  _≤_ (act LIFT P) = Lift≤ P
+  reflexive (act LIFT P) = Lift-reflexive P _
+  transitive (act LIFT P) = Lift-transitive P
+  propositional (act LIFT P) (η< p) (η< q) = cong η< (propositional P p q)
+  propositional (act LIFT P) bottom bottom = refl
+  fun (fmap LIFT f) = mapLift (fun f)
+  monotone (fmap LIFT f) (η x) (η y) (η< p) = η< (monotone f x y p)
+  monotone (fmap LIFT f) ⊥' y bottom = bottom
+  identity LIFT = eqMonotoneMap (ext λ { (η x) → refl ; ⊥' → refl })
+  homomorphism LIFT = eqMonotoneMap (ext λ { (η x) → refl ; ⊥' → refl })
 
   LIFT-MONAD : Monad PREORDER
-  LIFT-MONAD = {!!}
+  functor LIFT-MONAD = LIFT
+  fun (transform (returnNT LIFT-MONAD) P) = η
+  monotone (transform (returnNT LIFT-MONAD) P) x y p = η< p
+  natural (returnNT LIFT-MONAD) X Y f = eqMonotoneMap refl
+  fun (transform (joinNT LIFT-MONAD) P) (η x) = x
+  fun (transform (joinNT LIFT-MONAD) P) ⊥' = ⊥'
+  monotone (transform (joinNT LIFT-MONAD) P) (η x) (η y) (η< p) = p
+  monotone (transform (joinNT LIFT-MONAD) P) ⊥' y bottom = bottom
+  -- We left the following as exercises in the lecture:
+  natural (joinNT LIFT-MONAD) X Y f = eqMonotoneMap (ext λ { (η x) → refl ; ⊥' → refl })
+  returnJoin LIFT-MONAD = eqMonotoneMap refl
+  mapReturnJoin LIFT-MONAD = eqMonotoneMap (ext λ { (η x) → refl ; ⊥' → refl })
+  joinJoin LIFT-MONAD = eqMonotoneMap (ext λ { (η x) → refl ; ⊥' → refl })
+
+
+{-
+---------------------------------------------------------------------------
+-- Kleisli categories
+---------------------------------------------------------------------------
+
+open import Common.Category.Solver
+
+module _ {C : Category} where
+
+  open Category
+  open Monad
+  open NaturalTransformation
+
+  Kleisli : Monad C -> Category
+  Kleisli M = ?
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------
+-- Interlude: a solver for equations in categories
+---------------------------------------------------------------------------
+
+open import Common.Category.Solver
+
+module _ {C : Category} where
+
+  open Category C
+  open Functor
+
+{-
+
+      F (id ∘ f)
+  F X ----------> F X
+   |  \          ^ |
+   |   ---------/  |
+ g |     F f       | g
+   |               |
+   v     F h       v      F k
+  F Y ----------> F Y ----------> F Z
+   |                               ^
+   \------------------------------/
+           F (h ∘ k)
+-}
+
+
+  example : {X Y Z : Obj}(F : Functor C C) ->
+            (f : Hom X X)(g : Hom (act F X) (act F Y))(h : Hom Y Y)(k : Hom Y Z) ->
+            (assumption : comp (fmap F f) g ≡ comp g (fmap F h)) ->
+            comp (comp (fmap F (comp f id)) g) (fmap F k) ≡ comp g (fmap F (comp h k))
+  example F f g h k p = {!!}
+
+
 -}

@@ -15,6 +15,7 @@
 * Lecture 11: [Definition and examples of categories](https://youtu.be/vTZVdo2zRYM) (25 Oct)
 * Lecture 12: [Functors](https://youtu.be/a6Ex2N4NJO0) (27 Oct)
 * Lecture 13: [The category of categories, and natural transformations](https://youtu.be/HE96WiX_7Ww) (1 Nov)
+* Lecture 14: [Monads](https://youtu.be/7ag6f67xc5k) (3 Nov)
 
 ## Coursework
 

@@ -25,7 +25,12 @@ data SynHom (C : Category) : Obj C -> Obj C -> Set
 _∘Syn_ : ∀ {C R S T} -> SynHom C S T -> SynHom C R S -> SynHom C R T
 f ∘Syn g = compSyn g f
 
+_；Syn_ : ∀ {C R S T} -> SynHom C R S -> SynHom C S T -> SynHom C R T
+_；Syn_ = compSyn
+
+infixl 9 _；Syn_
 infixr 9 _∘Syn_
+
 
 -- the morphisms the syntax denotes
 ⟦_⟧Sy : ∀ {C S T} → SynHom C S T -> Hom C S T
