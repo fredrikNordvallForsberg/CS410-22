@@ -28,7 +28,7 @@ f ∘Syn g = compSyn g f
 _；Syn_ : ∀ {C R S T} -> SynHom C R S -> SynHom C S T -> SynHom C R T
 _；Syn_ = compSyn
 
-infixl 9 _；Syn_
+infixl 4 _；Syn_
 infixr 9 _∘Syn_
 
 
