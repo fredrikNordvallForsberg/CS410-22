@@ -155,40 +155,15 @@ homomorphism forget = refl
 -- Recall smallestOrder : SET → PREORDER
 
 morphismOutOfSmallestOrder : {X : Set}{P : Preorder} →
-                             {!!} →
-                             Hom PREORDER (act smallestOrder X) P
-morphismOutOfSmallestOrder = {!!}
+                             Hom SET                         X (act forget P) →
+                             Hom PREORDER (act smallestOrder X)            P
+fun (morphismOutOfSmallestOrder f) = f
+monotone (morphismOutOfSmallestOrder {P = P} f) x .x refl = reflexive P
 
-
-
-
-
-
-
-
-
-
-
-
--- In fact, they are all like that
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+morphismOutOfSmallestOrderAllOfThem : {X : Set}{P : Preorder} →
+                                      Hom PREORDER (act smallestOrder X)            P →
+                                      Hom SET                         X (act forget P)
+morphismOutOfSmallestOrderAllOfThem h = fun h
 
 -- The "Everything is related to everything else" construction
 
@@ -204,31 +179,39 @@ identity chaotic = eqMonotoneMap refl
 homomorphism chaotic = eqMonotoneMap refl
 
 morphismsIntoChaotic : {X : Set}{P : Preorder} →
-                       {!!} →
-                       Hom PREORDER P (act chaotic X)
-morphismsIntoChaotic = {!!}
+                       Hom SET (act forget P)             X →
+                       Hom PREORDER        P (act chaotic X)
+fun (morphismsIntoChaotic f) = f
+monotone (morphismsIntoChaotic f) x y p = tt
 
 
 -----------------------
 -- Floors and ceilings
 -----------------------
 
+{-
+Consider (ℚ, ≤) and (ℤ, ≤). Are they related?
+
+Yes, we have inject : (ℤ, ≤) → (ℚ, ≤) (order-preserving).
+
+[ If we see (ℤ, ≤) and (ℚ, ≤) as "boring" categories with at most one
+morphism between objects, inject is a functor.]
+
+What about (ℚ, ≤) → (ℤ, ≤)?
+
+floor : (ℚ, ≤) → (ℤ, ≤)
+ceiling : (ℚ, ≤) → (ℤ, ≤)
+
+How do these relate?
 
 
+ceiling q ≤        i    in ℤ   iff
+        q ≤ inject i    in ℚ
 
+i        ≤ floor q    iff
+inject i ≤ q
 
-
-
-
-
-
-
-
-
-
-
-
-
+-}
 
 
 -----------------------
@@ -238,42 +221,52 @@ morphismsIntoChaotic = {!!}
 open import Common.Category.Adjunctions
 open Adjunction
 
+  -- F ⊣ G "F is the left adjoint of G", "G is the right adjoint of F"
 
 discrete⊣forget : Adjunction smallestOrder forget
-discrete⊣forget = {!!}
+to discrete⊣forget = morphismOutOfSmallestOrderAllOfThem
+from discrete⊣forget = morphismOutOfSmallestOrder
+left-inverse-of discrete⊣forget h = eqMonotoneMap refl
+right-inverse-of discrete⊣forget k = refl
+to-natural discrete⊣forget f g = refl
 
 forget⊣chaotic : Adjunction forget chaotic
-forget⊣chaotic = {!!}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fun (to forget⊣chaotic f) = f
+monotone (to forget⊣chaotic f) = _
+from forget⊣chaotic f = fun f
+left-inverse-of forget⊣chaotic h = refl
+right-inverse-of forget⊣chaotic h = eqMonotoneMap refl
+to-natural forget⊣chaotic f g = ext \ h -> eqMonotoneMap refl
 
 -----------------------
 -- One more example
 -----------------------
 
 PAIR : Category -> Category -> Category
-PAIR C D = {!!}
+Obj (PAIR C D) = Obj C × Obj D
+Hom (PAIR C D) (X , Y) (X' , Y')= Hom C X X' × Hom D Y Y'
+id (PAIR C D) {X , Y} = id C , id D
+comp (PAIR C D) (f , g) (f' , g') = (comp C f f') , (comp D g g')
+assoc (PAIR C D) = cong₂ _,_ (assoc C) (assoc D)
+identityˡ (PAIR C D) = cong₂ _,_ (identityˡ C) (identityˡ D)
+identityʳ (PAIR C D) = cong₂ _,_ (identityʳ C) (identityʳ D)
 
 diag : {C : Category} -> Functor C (PAIR C C)
-diag = {!!}
+act diag X = (X , X)
+fmap diag f = (f , f)
+identity diag = refl
+homomorphism diag = refl
 
 Either : Functor (PAIR SET SET) SET
-Either = {!!}
+act Either (X , Y) = X ⊎ Y
+fmap Either (f , g) = Data.Sum.map f g
+identity Either = ext λ { (inj₁ x) → refl ; (inj₂ y) → refl }
+homomorphism Either = ext λ { (inj₁ x) → refl ; (inj₂ y) → refl }
 
 Either⊣diag : Adjunction Either (diag {SET})
-Either⊣diag = {!!}
+to Either⊣diag {X , Y} f = (λ x → f (inj₁ x)) , (λ y → f (inj₂ y))
+from Either⊣diag (h , k) (inj₁ x) = h x
+from Either⊣diag (h , k) (inj₂ y) = k y
+left-inverse-of Either⊣diag h = ext λ { (inj₁ x) → refl ; (inj₂ y) → refl }
+right-inverse-of Either⊣diag (f , g) = refl
+to-natural Either⊣diag (f , f') g = refl

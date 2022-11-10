@@ -17,6 +17,7 @@
 * Lecture 13: [The category of categories, and natural transformations](https://youtu.be/HE96WiX_7Ww) (1 Nov)
 * Lecture 14: [Monads](https://youtu.be/7ag6f67xc5k) (3 Nov)
 * Lecture 15: [Kleisli categories](https://youtu.be/TX0daEBxc0E) (8 Nov)
+* Lecture 16: [Adjunctions](https://youtu.be/5x2c04gUQzM) (10 Nov)
 
 ## Coursework
 
