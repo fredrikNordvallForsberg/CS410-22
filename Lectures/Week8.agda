@@ -4,6 +4,8 @@ module Lectures.Week8 where
 open import Data.Nat hiding (_≤_)
 open import Function using (_∘_)
 open import Data.Product
+open import Data.Sum
+open import Data.Unit using (⊤; tt)
 
 open import Relation.Binary.PropositionalEquality
 
@@ -128,3 +130,150 @@ F id   |   ----------
      reduced (rd, ... , rq p , rd ...)
    where p proves interesting equation.
 -}
+
+---------------------------------------------------------------------------
+-- Adjunctions
+---------------------------------------------------------------------------
+
+open Category
+open Functor
+
+open import Lectures.Week6 hiding (SET)
+open Preorder
+open MonotoneMap
+
+-----------------
+-- Order, order!
+-----------------
+
+forget : Functor PREORDER SET
+act forget X = Carrier X
+fmap forget f = fun f
+identity forget = refl
+homomorphism forget = refl
+
+-- Recall smallestOrder : SET → PREORDER
+
+morphismOutOfSmallestOrder : {X : Set}{P : Preorder} →
+                             {!!} →
+                             Hom PREORDER (act smallestOrder X) P
+morphismOutOfSmallestOrder = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+-- In fact, they are all like that
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- The "Everything is related to everything else" construction
+
+chaotic : Functor SET PREORDER
+Carrier (act chaotic B) = B
+_≤_ (act chaotic B) b b' = ⊤
+reflexive (act chaotic B) = tt
+transitive (act chaotic B) _ _ = tt
+propositional (act chaotic B) p q = refl
+fun (fmap chaotic f) = f
+monotone (fmap chaotic f) x y p = tt
+identity chaotic = eqMonotoneMap refl
+homomorphism chaotic = eqMonotoneMap refl
+
+morphismsIntoChaotic : {X : Set}{P : Preorder} →
+                       {!!} →
+                       Hom PREORDER P (act chaotic X)
+morphismsIntoChaotic = {!!}
+
+
+-----------------------
+-- Floors and ceilings
+-----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+-- The common pattern
+-----------------------
+
+open import Common.Category.Adjunctions
+open Adjunction
+
+
+discrete⊣forget : Adjunction smallestOrder forget
+discrete⊣forget = {!!}
+
+forget⊣chaotic : Adjunction forget chaotic
+forget⊣chaotic = {!!}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------
+-- One more example
+-----------------------
+
+PAIR : Category -> Category -> Category
+PAIR C D = {!!}
+
+diag : {C : Category} -> Functor C (PAIR C C)
+diag = {!!}
+
+Either : Functor (PAIR SET SET) SET
+Either = {!!}
+
+Either⊣diag : Adjunction Either (diag {SET})
+Either⊣diag = {!!}
