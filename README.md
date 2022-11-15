@@ -18,6 +18,7 @@
 * Lecture 14: [Monads](https://youtu.be/7ag6f67xc5k) (3 Nov)
 * Lecture 15: [Kleisli categories](https://youtu.be/TX0daEBxc0E) (8 Nov)
 * Lecture 16: [Adjunctions](https://youtu.be/5x2c04gUQzM) (10 Nov)
+* Lecture 17: [Free categories](https://youtu.be/mSOQIz9Ap5o) (15 Nov)
 
 ## Coursework
 
