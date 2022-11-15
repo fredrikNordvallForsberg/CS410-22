@@ -19,20 +19,21 @@ open Functor
 open Adjunction
 
 REL : Category
-REL = {!!}
+Obj REL = Σ[ A ∈ Set ] (A → A → Set)
+Hom REL (A , R) (A' , R')= Σ[ f ∈ (A → A') ] (∀{a b} → R a b → R' (f a) (f b))
+id REL = (id SET) , λ p → p
+comp REL (f , p) (g , q)  = (comp SET f g) , λ x → q (p x)
+assoc REL = refl
+identityˡ REL = refl
+identityʳ REL = refl
+
+
 
 forgetCategory : Functor CAT REL
-forgetCategory = {!!}
-
-
-
-
-
-
-
-
-
-
+act forgetCategory C = (Obj C) , (Hom C)
+fmap forgetCategory F = (act F) , (fmap F)
+identity forgetCategory = refl
+homomorphism forgetCategory = refl
 
 
 
@@ -40,10 +41,64 @@ data Star {A : Set}(R : A -> A -> Set) : A -> A -> Set where
   ε : ∀ {a} → Star R a a
   _∷_ : ∀ {a b c} → R a b -> Star R b c -> Star R a c
 
+_++S_ : {A : Set}{R : A -> A -> Set} -> {a b c  : A} -> Star R a b -> Star R b c -> Star R a c
+ε ++S ys = ys
+(x ∷ xs) ++S ys = x ∷ (xs ++S ys)
+
+assoc-++S : {A : Set}{R : A -> A -> Set} ->
+          ∀{a b c d}(f : Star R a b)(g : Star R b c)(h : Star R c d) ->
+          f ++S (g ++S h) ≡ (f ++S g) ++S h
+assoc-++S ε g h = refl
+assoc-++S (x ∷ f) g h = cong (x ∷_) (assoc-++S f g h)
+
+++S-identityʳ : {A : Set}{R : A -> A -> Set}{a b : A}(f : Star R a b) → f ++S ε ≡ f
+++S-identityʳ ε = refl
+++S-identityʳ (x ∷ f) = cong (x ∷_) (++S-identityʳ f)
+
+mapS : {A B : Set}{R : A -> A -> Set}{Q : B -> B -> Set} ->
+       (f : A -> B)(p : ∀ a a' → R a a' -> Q (f a) (f a')) ->
+       {a a' : A} -> Star R a a' -> Star Q (f a) (f a')
+mapS f p ε = ε
+mapS f p (x ∷ xs) = p _ _ x ∷ mapS f p xs
+
+mapS-++ : {A B : Set}{R : A -> A -> Set}{Q : B -> B -> Set} ->
+          (f : A -> B)(p : ∀ a a' → R a a' -> Q (f a) (f a')) ->
+          {a b c : A} -> (xs : Star R a b)(ys : Star R b c) ->
+          mapS {Q = Q} f p (xs ++S ys) ≡ mapS f p xs ++S mapS f p ys
+mapS-++ f p ε ys = refl
+mapS-++ f p (x ∷ xs) ys = cong (p _ _ x ∷_) (mapS-++ f p xs ys)
+
+mapS-id : ∀ {A R}{a b : A}(xs : Star R a b) -> mapS (id SET) (λ a b r → r) xs ≡ xs
+mapS-id ε = refl
+mapS-id (x ∷ xs) = cong (x ∷_) (mapS-id xs)
+
+mapS-∘ : {A A' A'' : Set}
+         {R : A -> A -> Set}{R' : A' -> A' -> Set}{R'' : A'' -> A'' -> Set} ->
+         (f : A -> A')(p : ∀ a a' → R a a' -> R' (f a) (f a')) ->
+         (f' : A' -> A'')(p' : ∀ a a' → R' a a' -> R'' (f' a) (f' a')) ->
+         {a b : A} -> (xs : Star R a b) ->
+         mapS {Q = R''} (comp SET f f') (λ a b r → p' _ _ (p _ _ r)) xs ≡ mapS f' p' (mapS f p xs)
+mapS-∘ f p f' p' ε = refl
+mapS-∘ f p f' p' (x ∷ xs) = cong (p' (f _) (f _) (p _ _ x) ∷_) (mapS-∘ f p f' p' xs)
+
+
+
 freeCategory : Functor REL CAT
-freeCategory = {!!}
+Obj (act freeCategory (A , R)) = A
+Hom (act freeCategory (A , R)) = Star R
+id (act freeCategory (A , R)) = ε
+comp (act freeCategory (A , R)) = _++S_
+assoc (act freeCategory (A , R)) {f = f} {g} {h} = assoc-++S f g h
+identityˡ (act freeCategory (A , R)) = refl
+identityʳ (act freeCategory (A , R)) = ++S-identityʳ _
+act (fmap freeCategory (f , p)) = f
+fmap (fmap freeCategory (f , p)) = mapS f (λ _ _ → p)
+identity (fmap freeCategory (f , p)) = refl
+homomorphism (fmap freeCategory (f , p)) {g = g} = mapS-++ f _ _ g
+identity freeCategory = eqFunctor refl (ext mapS-id)
+homomorphism freeCategory = eqFunctor refl (ext (mapS-∘ _ _ _ _ ))
+
 
 freeCatisFree : Adjunction freeCategory forgetCategory
 freeCatisFree = {!!}
-
 
