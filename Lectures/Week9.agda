@@ -3,12 +3,16 @@ module Lectures.Week9 where
 
 open import Relation.Binary.PropositionalEquality
 open import Data.Product
+open import Axiom.Extensionality.Propositional
 
 open import Lectures.Week6 hiding (SET)
+open import Lectures.Week7
+open import Lectures.Week8
 
 
 open import Common.Category
 open import Common.Category.Adjunctions
+open import Common.Category.Solver
 
 ---------------------------------------------------------------------------
 -- Free categories
@@ -98,7 +102,83 @@ homomorphism (fmap freeCategory (f , p)) {g = g} = mapS-++ f _ _ g
 identity freeCategory = eqFunctor refl (ext mapS-id)
 homomorphism freeCategory = eqFunctor refl (ext (mapS-∘ _ _ _ _ ))
 
+foldStar : ∀ {A R a b} → (B : Category) ->
+           (f : A -> Obj B)(p : ∀ {a a'} → R a a' -> Hom B (f a) (f a')) -> Star R a b -> Hom B (f a) (f b)
+foldStar B f p ε = id B
+foldStar B f p (x ∷ xs) = comp B (p x) (foldStar B f p xs)
 
 freeCatisFree : Adjunction freeCategory forgetCategory
 freeCatisFree = {!!}
 
+-- iext = implicit-extensionality ext
+
+
+
+
+
+
+
+
+
+
+
+
+{-
+
+---------------------------------------------------------------------------
+-- Monads from adjunctions
+---------------------------------------------------------------------------
+
+open Monad
+open NaturalTransformation
+
+
+monadFromAdj : (C D : Category)(F : Functor C D)(G : Functor D C) ->
+               Adjunction F G -> Monad C
+functor (monadFromAdj C D F G adj) = {!!}
+transform (returnNT (monadFromAdj C D F G adj)) X = {!!}
+natural (returnNT (monadFromAdj C D F G adj)) X Y f = {!trans (to-natural₁ adj f) (sym (to-natural₂ adj (fmap F f)))!}
+transform (joinNT (monadFromAdj C D F G adj)) X = {!!}
+natural (joinNT (monadFromAdj C D F G adj)) X Y f = {!C ⊧begin
+ fmapSyn G < from adj (id C) >  ∘Syn fmapSyn G (fmapSyn F (fmapSyn G (fmapSyn F < f > )))
+   ≡⟦ solveCat refl ⟧
+ fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F (fmapSyn G (fmapSyn F < f > )))
+   ≡⟦ reduced (rq (cong (fmap G) (trans (from-natural₁ adj (fmap G (fmap F f))) (sym (from-natural₂ adj (fmap F f)))))) ⟧
+ fmapSyn G (fmapSyn F < f > ∘Syn < from adj (id C) >)
+   ≡⟦ solveCat refl ⟧
+ fmapSyn G (fmapSyn F < f >) ∘Syn fmapSyn G < from adj (id C) >
+   ⟦∎⟧!}
+returnJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+  -[ fmapSyn G < from adj (id C) > ∘Syn < to adj (id D) > ]-
+    ≡⟦ reduced (rq (to-natural₂ adj (from adj (id C)))) ⟧
+  < to adj (from adj (id C)) >
+    ≡⟦ reduced (rq (right-inverse-of adj (id C))) ⟧
+  idSyn
+    ⟦∎⟧!}
+mapReturnJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+  fmapSyn G < from adj (id C) > ∘Syn fmapSyn G (fmapSyn F < to adj (id D) >)
+    ≡⟦ solveCat refl ⟧
+  fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F < to adj (id D) >)
+    ≡⟦ reduced (rq (cong (fmap G) (trans (from-natural₁ adj (to adj (id D))) (left-inverse-of adj (id D))))) ⟧
+  fmapSyn G idSyn
+    ≡⟦ solveCat refl ⟧
+  idSyn
+    ⟦∎⟧!}
+joinJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+  fmapSyn G < from adj (id C) > ∘Syn fmapSyn G < from adj (id C) >
+    ≡⟦ solveCat refl ⟧
+  fmapSyn G (< from adj (id C) > ∘Syn < from adj (id C) >)
+    ≡⟦ reduced (rq (cong (fmap G) (D ⊧begin
+         -[ < from adj (id C) > ∘Syn < from adj (id C) > ]-
+           ≡⟦ reduced (rq (from-natural₂ adj (from adj (id C)))) ⟧
+         < from adj (fmap G (from adj (id C))) >
+            ≡⟦ reduced (rq (sym (from-natural₁ adj (fmap G (from adj (id C)))))) ⟧
+         < from adj (id C) > ∘Syn fmapSyn F (fmapSyn G < from adj (id C) >)
+           ⟦∎⟧))) ⟧
+  fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F (fmapSyn G < from adj (id C) >))
+      ≡⟦ solveCat refl ⟧
+  fmapSyn G < from adj (id C) > ∘Syn fmapSyn G (fmapSyn F (fmapSyn G < from adj (id C) >))
+    ⟦∎⟧!}
+
+
+-- -}
