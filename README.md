@@ -19,6 +19,7 @@
 * Lecture 15: [Kleisli categories](https://youtu.be/TX0daEBxc0E) (8 Nov)
 * Lecture 16: [Adjunctions](https://youtu.be/5x2c04gUQzM) (10 Nov)
 * Lecture 17: [Free categories](https://youtu.be/mSOQIz9Ap5o) (15 Nov)
+* Lecture 18: [The free-forgetful adjunction for categories, and monads from adjunctions](https://youtu.be/GWLIMXxu-bw) (17 Nov)
 
 ## Coursework
 

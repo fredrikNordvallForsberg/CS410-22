@@ -102,28 +102,29 @@ homomorphism (fmap freeCategory (f , p)) {g = g} = mapS-++ f _ _ g
 identity freeCategory = eqFunctor refl (ext mapS-id)
 homomorphism freeCategory = eqFunctor refl (ext (mapS-∘ _ _ _ _ ))
 
-foldStar : ∀ {A R a b} → (B : Category) ->
-           (f : A -> Obj B)(p : ∀ {a a'} → R a a' -> Hom B (f a) (f a')) -> Star R a b -> Hom B (f a) (f b)
+foldStar : {A : Set}{R : A → A → Set}(B : Category) →
+           (f : A → Obj B)(p :{a b : A} → R a b → Hom B (f a) (f b)) →
+           {X Y : A} → Star R X Y → Hom B (f X) (f Y)
 foldStar B f p ε = id B
-foldStar B f p (x ∷ xs) = comp B (p x) (foldStar B f p xs)
+foldStar B f p (r ∷ rs) = comp B (p r) (foldStar B f p rs)
 
 freeCatisFree : Adjunction freeCategory forgetCategory
-freeCatisFree = {!!}
-
--- iext = implicit-extensionality ext
-
-
-
-
-
-
-
-
-
-
-
-
-{-
+to freeCatisFree {A , R} {B} F = act F , λ r → fmap F (r ∷ ε)
+act (from freeCatisFree {A , R} (f , p)) = f
+fmap (from freeCatisFree {A , R} {B} (f , p)) = foldStar B f p
+identity (from freeCatisFree (f , p)) = refl
+homomorphism (from freeCatisFree {A , R} {B} (f , p)) {f = ε} = sym (identityˡ B)
+homomorphism (from freeCatisFree {A , R} {B} (f , p)) {f = r ∷ rs} =
+  trans (cong (comp B (p r)) (homomorphism (from freeCatisFree {A , R} {B} (f , p)) {f = rs})) (assoc B)
+left-inverse-of freeCatisFree {A , R} {B}  F = eqFunctor refl (ext lemma)
+  where
+    lemma : ∀ {A₁ B₁} → (x : Star R A₁ B₁) → foldStar B (act F) (λ r → fmap F (r ∷ ε)) x ≡ fmap F x
+    lemma ε = sym (identity F)
+    lemma (x ∷ rs) rewrite lemma rs = sym (homomorphism F)
+right-inverse-of freeCatisFree {A , R} {B}  (f , p) = cong (f ,_) (iext (iext (ext λ r → identityʳ B)))
+ where
+   iext = implicit-extensionality ext
+to-natural freeCatisFree {A , R} {B} f g = refl
 
 ---------------------------------------------------------------------------
 -- Monads from adjunctions
@@ -135,11 +136,11 @@ open NaturalTransformation
 
 monadFromAdj : (C D : Category)(F : Functor C D)(G : Functor D C) ->
                Adjunction F G -> Monad C
-functor (monadFromAdj C D F G adj) = {!!}
-transform (returnNT (monadFromAdj C D F G adj)) X = {!!}
-natural (returnNT (monadFromAdj C D F G adj)) X Y f = {!trans (to-natural₁ adj f) (sym (to-natural₂ adj (fmap F f)))!}
-transform (joinNT (monadFromAdj C D F G adj)) X = {!!}
-natural (joinNT (monadFromAdj C D F G adj)) X Y f = {!C ⊧begin
+functor (monadFromAdj C D F G adj) = comp CAT F G
+transform (returnNT (monadFromAdj C D F G adj)) X = to adj (id D)
+natural (returnNT (monadFromAdj C D F G adj)) X Y f = trans (to-natural₁ adj f) (sym (to-natural₂ adj (fmap F f)))
+transform (joinNT (monadFromAdj C D F G adj)) X = fmap G (from adj (id C))
+natural (joinNT (monadFromAdj C D F G adj)) X Y f = C ⊧begin
  fmapSyn G < from adj (id C) >  ∘Syn fmapSyn G (fmapSyn F (fmapSyn G (fmapSyn F < f > )))
    ≡⟦ solveCat refl ⟧
  fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F (fmapSyn G (fmapSyn F < f > )))
@@ -147,15 +148,15 @@ natural (joinNT (monadFromAdj C D F G adj)) X Y f = {!C ⊧begin
  fmapSyn G (fmapSyn F < f > ∘Syn < from adj (id C) >)
    ≡⟦ solveCat refl ⟧
  fmapSyn G (fmapSyn F < f >) ∘Syn fmapSyn G < from adj (id C) >
-   ⟦∎⟧!}
-returnJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+   ⟦∎⟧
+returnJoin (monadFromAdj C D F G adj) = C ⊧begin
   -[ fmapSyn G < from adj (id C) > ∘Syn < to adj (id D) > ]-
     ≡⟦ reduced (rq (to-natural₂ adj (from adj (id C)))) ⟧
   < to adj (from adj (id C)) >
     ≡⟦ reduced (rq (right-inverse-of adj (id C))) ⟧
   idSyn
-    ⟦∎⟧!}
-mapReturnJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+    ⟦∎⟧
+mapReturnJoin (monadFromAdj C D F G adj) = C ⊧begin
   fmapSyn G < from adj (id C) > ∘Syn fmapSyn G (fmapSyn F < to adj (id D) >)
     ≡⟦ solveCat refl ⟧
   fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F < to adj (id D) >)
@@ -163,8 +164,8 @@ mapReturnJoin (monadFromAdj C D F G adj) = {!C ⊧begin
   fmapSyn G idSyn
     ≡⟦ solveCat refl ⟧
   idSyn
-    ⟦∎⟧!}
-joinJoin (monadFromAdj C D F G adj) = {!C ⊧begin
+    ⟦∎⟧
+joinJoin (monadFromAdj C D F G adj) = C ⊧begin
   fmapSyn G < from adj (id C) > ∘Syn fmapSyn G < from adj (id C) >
     ≡⟦ solveCat refl ⟧
   fmapSyn G (< from adj (id C) > ∘Syn < from adj (id C) >)
@@ -178,7 +179,5 @@ joinJoin (monadFromAdj C D F G adj) = {!C ⊧begin
   fmapSyn G (< from adj (id C) > ∘Syn fmapSyn F (fmapSyn G < from adj (id C) >))
       ≡⟦ solveCat refl ⟧
   fmapSyn G < from adj (id C) > ∘Syn fmapSyn G (fmapSyn F (fmapSyn G < from adj (id C) >))
-    ⟦∎⟧!}
+    ⟦∎⟧
 
-
--- -}
