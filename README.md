@@ -20,6 +20,8 @@
 * Lecture 16: [Adjunctions](https://youtu.be/5x2c04gUQzM) (10 Nov)
 * Lecture 17: [Free categories](https://youtu.be/mSOQIz9Ap5o) (15 Nov)
 * Lecture 18: [The free-forgetful adjunction for categories, and monads from adjunctions](https://youtu.be/GWLIMXxu-bw) (17 Nov)
+* Lecture 19: [Every monad arises from an adjunction](https://youtu.be/IX8GuKzgh8o) (22 Nov)
+* Lecture 20: Cancelled due to [deteriorating pension and working conditions in UK higher education](https://www.ucu.org.uk/article/12469/FAQs) (24 Nov)
 
 ## Coursework
 
